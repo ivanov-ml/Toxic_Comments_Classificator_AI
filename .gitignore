@@ -3,3 +3,6 @@ data
 .venv
 .DS_Store
 .idea/
+docker-compose.yml
+mlruns/
+Dockerfile

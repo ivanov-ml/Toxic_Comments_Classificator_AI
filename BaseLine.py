@@ -5,6 +5,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
 import pandas as pd
 from sklearn.metrics import roc_auc_score
+import joblib
+
+
 
 
 df = pd.read_csv('data/cleaned_data.csv')
@@ -40,3 +43,5 @@ for i, col in enumerate(label_cols):
     auc_scores.append(auc)
 
 print(f"Mean ROC-AUC: {sum(auc_scores) / len(auc_scores):.4f}")
+
+joblib.dump(pipeline, 'models/toxic_pipeline.pkl')

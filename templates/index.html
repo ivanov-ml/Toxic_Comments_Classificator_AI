@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Токсичный комментарий</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            resize: vertical;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e9f5ff;
+            border-radius: 8px;
+        }
+        .result h3 {
+            margin-top: 0;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .label {
+            font-weight: bold;
+        }
+        .score {
+            color: #007bff;
+        }
+        .danger {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .safe {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ Проверка на токсичность</h1>
+        <p>Введите комментарий, и модель оценит его по 6 категориям:</p>
+
+        <form method="post" action="/predict">
+            <textarea name="text" placeholder="Напишите что-нибудь...">{{ text if text else '' }}</textarea>
+            <button type="submit">🔍 Проверить</button>
+        </form>
+
+        {% if results %}
+        <div class="result">
+            <h3>📊 Результат для:</h3>
+            <p><em>{{ text }}</em></p>
+            <hr>
+            {% for label, score in results.items() %}
+            <div class="result-item">
+                <span class="label">{{ label }}</span>
+                <span class="score">{{ "%.2f"|format(score * 100) }}%</span>
+            </div>
+            {% endfor %}
+            <hr>
+            <p>
+                {% set max_item = results|dictsort(by='value', reverse=True)|first %}
+                {% set max_label = max_item[0] %}
+                {% if results[max_label] > 0.5 %}
+                <span class="danger">⚠️ Высокая токсичность ({{ max_label }})</span>
+                {% else %}
+                <span class="safe">✅ Низкая токсичность</span>
+                {% endif %}
+            </p>
+        </div>
+        {% endif %}
+
+        <div class="footer">
+            <p>Модель: TF‑IDF + логистическая регрессия | ROC‑AUC 0.9746</p>
+        </div>
+    </div>
+</body>
+</html>
