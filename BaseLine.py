@@ -44,4 +44,4 @@ for i, col in enumerate(label_cols):
 
 print(f"Mean ROC-AUC: {sum(auc_scores) / len(auc_scores):.4f}")
 
-joblib.dump(pipeline, 'models/toxic_pipeline.pkl')
+joblib.dump(pipeline, 'app/models/toxic_pipeline.pkl')
